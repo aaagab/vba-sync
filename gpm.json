@@ -1,0 +1,16 @@
+{
+    "alias": "vba-sync",
+    "authors": [
+        "Gabriel Auger"
+    ],
+    "deps": [],
+    "description": "Allow to edit vba from text editor",
+    "filen_main": "main.py",
+    "installer": "gpm",
+    "licenses": [
+        "MIT"
+    ],
+    "name": "vba-sync",
+    "uuid4": "ec2779f4-947e-44cf-9eb6-ef68f75efbf5",
+    "version": "0.0.0"
+}
