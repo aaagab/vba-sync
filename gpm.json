@@ -6,7 +6,8 @@
     "deps": [
         "cf09346e-b436-4259-b6dd-e56516b508a5|message|8.1.1|gpm",
         "ca72f0a9-8a9b-4ff6-a013-e5d0974cb1e5|options|8.8.0|gpm",
-        "b1a980c3-6e1c-4072-a16c-81df61f2f898|prompt|3.2.0|gpm"
+        "b1a980c3-6e1c-4072-a16c-81df61f2f898|prompt|3.2.0|gpm",
+        "01f987df-3241-4c49-9fec-049aa0a8701c|timeout|3.0.1|gpm"
     ],
     "description": "Allow to edit vba from text editor",
     "filen_main": "main.py",
@@ -15,7 +16,7 @@
         "MIT"
     ],
     "name": "vba-sync",
-    "timestamp": 1629837922.6594255,
+    "timestamp": 1629838560.5884428,
     "uuid4": "ec2779f4-947e-44cf-9eb6-ef68f75efbf5",
-    "version": "1.2.1"
+    "version": "1.3.0"
 }
