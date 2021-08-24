@@ -9,6 +9,7 @@ import pythoncom
 
 from .enums import get_dy_enum
 
+from ..gpkgs.timeout import TimeOut
 from ..gpkgs import message as msg
 from ..gpkgs.prompt import prompt_boolean, prompt_multiple, prompt
 
@@ -37,33 +38,35 @@ def focus_window(hwnd):
     win32gui.SetForegroundWindow(hwnd)
 
 def focus_workbook(dy_options):
-    # that line below is needed to prevent thread issue pywintypes.com_error: (-2147221008, 'CoInitialize has not been called.', None, None)
-    pythoncom.CoInitialize()
+    timer=TimeOut(3).start()
     while True:
-        if dy_options["search"] is True:
-            windows=dict()
-            win32gui.EnumWindows( winEnumHandler, windows)
-            found=False
-            for hwnd in sorted(windows):
-                window_title=windows[hwnd]
-                if dy_options["window_title"] in window_title:
-                    focus_window(hwnd)
-                    found=True
-                    if dy_options["immediate"] is True:
-                        shell = win32com.client.Dispatch("WScript.Shell")
+        windows=dict()
+        win32gui.EnumWindows( winEnumHandler, windows)
+        found=False
+        for hwnd in sorted(windows):
+            window_title=windows[hwnd]
+            if dy_options["window_title"] in window_title:
+                focus_window(hwnd)
+                found=True
+                if dy_options["immediate"] is True:
+                    shell = win32com.client.Dispatch("WScript.Shell")
+                    time.sleep(.1)
+                    shell.SendKeys("%{F11}")
+                    time.sleep(.1)
+                    shell.SendKeys("^g")
+                    if dy_options["clear"] is True:
                         time.sleep(.1)
-                        shell.SendKeys("%{F11}")
-                        time.sleep(.1)
-                        shell.SendKeys("^g")
-                    break
-            if found is True:
+                        shell.SendKeys("^a")
+                        shell.SendKeys("{DEL}")
                 break
-            time.sleep(.05)
-        else:
+        if found is True:
             break
+        elif timer.has_ended(pause=.05):
+            msg.error("Can't focus window '{}'".format(dy_options["window_title"]), exit=1)
 
 def macro(
     active_hwnd,
+    clear,
     filenpa_workbook,
     macro_name,
     immediate=False,
@@ -99,12 +102,12 @@ def macro(
 
     wb.EnableAutoRecover=False
     dy_options=dict(
+        clear=clear,
         immediate=immediate,
-        search=True,
         window_title="{} - Excel".format(filen_workbook),
     )
-    th=threading.Thread(target=focus_workbook, args=(dy_options,))
-    th.start()
+
+    focus_workbook(dy_options)
 
     cmd=[
         macro_name,
@@ -114,7 +117,6 @@ def macro(
     try:
         xl.Run(*cmd)
     except com_error as e:
-        dy_options["search"]=False
         manage_error(
             active_hwnd, 
             e, 
@@ -125,7 +127,6 @@ def macro(
         )
         
     else:
-        dy_options["search"]=False
         msg.success("{} {}".format(filen_workbook, macro_name))
 
 def manage_error(

@@ -4,11 +4,16 @@
         "info": "Import vba modules from direpa srcs to workbook.",
         "args": "overwrite,reset_cache,srcs,workbook"
     },
+    "clear": {
+        "info": "clear immediate window",
+        "nested": true
+    },
     "export": {
         "args": "overwrite,srcs,workbook",
         "info": "Save vba modules for editing from workbook to srcs directory."
     },
     "immediate": {
+        "args": "clear",
         "info": "open the immediate window that is useful to debug in vba with Debug.Print",
         "nested": true
     },
