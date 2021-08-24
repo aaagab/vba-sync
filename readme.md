@@ -10,7 +10,17 @@ md5 from files to edit are checked against a cache file that is stored in srcs f
 issue:
 exported file trying to run ExportModules issue: "user-defined type not defined" error message on this line: Dim VBComp As VBIDE.VBComponent
 fix:
-add a reference to "Microsoft Visual Basic For Applications Extensibility" and to "Microsoft Scripting Runtime" (in the VBA window, select Tools/References and set the check box for this).
+  Actually that might only be needed when using the export directly from a vba module not from python win32com
+  add a reference to "Microsoft Visual Basic For Applications Extensibility" (in the VBA window, select Tools/References and set the check box for this).
+  I am not sure about that one so I disable it for now ("Microsoft Scripting Runtime")
+  If it is needed to check and add references programmatically that is the path to follow:
+  ```python
+    # That might be needed VBIDE is "Microsoft Visual Basic For Applications Extensibility"
+    # refNames=[chkRef.Name for chkRef in wb.VBProject.References]
+    # if "VBIDE" not in refNames:
+    #     print("do something")
+    # wb.VBProject.References.AddFromFile()
+  ```
 
 There is no way to get win32com object class members from python, in order to know them only the microsoft documentation can provide them: https://docs.microsoft.com/en-us/office/vba/api/overview/
 For instance here for application object. https://docs.microsoft.com/en-us/office/vba/api/excel.application(object)

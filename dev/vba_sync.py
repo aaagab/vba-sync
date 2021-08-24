@@ -61,6 +61,7 @@ def focus_workbook(dy_options):
             break
 
 def macro(
+    active_hwnd,
     filenpa_workbook,
     macro_name,
     immediate=False,
@@ -102,7 +103,6 @@ def macro(
     th=threading.Thread(target=focus_workbook, args=(dy_options,))
     th.start()
 
-    has_error=False
     cmd=[
         macro_name,
         *params
@@ -112,42 +112,49 @@ def macro(
         xl.Run(*cmd)
     except com_error as e:
         dy_options["search"]=False
-        time.sleep(.1)
-        focus_window(active_hwnd)
-        has_error=True
-        pprint(vars(e))
-        e_msg=None
-        error_code=None
-        for i, elem in enumerate(e.excepinfo):
-            if i == len(e.excepinfo) -1:
-                try:
-                    error_code=elem
-                    e_msg=win32api.FormatMessage(elem).rstrip()
-                except pywintypes.error as e:
-                    print(e)
-                    msg.error("error code '{}' not found with win32api.FormatMessage. Trying to extract error message anyway.".format(error_code))
-            else:
-                if isinstance(elem, str):
-                    if e_msg is None:
-                        e_msg=elem
-                    else:
-                        e_msg+=", {}".format(elem)
-     
-        msg.error("At '{}' when running macro '{}' error '{}'".format(
-            os.path.basename(filenpa_workbook),
-            macro_name,
-            e_msg
-        ))
-    finally:
-        dy_options["search"]=False
-
-    if has_error is True:
-        sys.exit(1)
+        manage_error(
+            active_hwnd, 
+            e, 
+            "At '{}' when running macro '{}'".format(
+                filen_workbook,
+                macro_name,
+            ),
+        )
+        
     else:
-        msg.success("{} {}".format(os.path.basename(filenpa_workbook), macro_name))
+        dy_options["search"]=False
+        msg.success("{} {}".format(filen_workbook, macro_name))
 
+def manage_error(
+    active_hwnd,
+    e,
+    custom_msg,
+):
+    time.sleep(.1)
+    focus_window(active_hwnd)
+    pprint(vars(e))
+    e_msg=None
+    error_code=None
+    for i, elem in enumerate(e.excepinfo):
+        if i == len(e.excepinfo) -1:
+            try:
+                error_code=elem
+                e_msg=win32api.FormatMessage(elem).rstrip()
+            except pywintypes.error as e:
+                print(e)
+                msg.error("error code '{}' not found with win32api.FormatMessage. Trying to extract error message anyway.".format(error_code))
+        else:
+            if isinstance(elem, str):
+                if e_msg is None:
+                    e_msg=elem
+                else:
+                    e_msg+=", {}".format(elem)
+    
+    msg.error("{} error '{}'".format(custom_msg, e_msg))
+    sys.exit(1)
 
 def export(
+    active_hwnd,
     filenpa_workbook,
     direpa_srcs,
     overwrite,
@@ -191,8 +198,18 @@ def export(
                         to_export=prompt_boolean("Overwrite", "Y")
 
                     if to_export is True:
-                        component.Export(filenpaXlsModule)
-                        msg.success("Module '{}' exported.".format(module_name))
+                        try:
+                            component.Export(filenpaXlsModule)
+                            msg.success("Module '{}' exported.".format(module_name))
+                        except com_error as e:
+                            manage_error(
+                                active_hwnd, 
+                                e, 
+                                "At '{}' when exporting module '{}'".format(
+                                    filen_workbook,
+                                    module_name,
+                                ),
+                            )
                     else:
                         msg.info("Module '{}' ignored.".format(module_name))
 
@@ -206,6 +223,7 @@ def export(
         msg.success("Export modules from '{}' completed.".format(os.path.basename(filenpa_workbook)))
 
 def _import(
+    active_hwnd,
     filenpa_cache,
     filenpa_workbook,
     direpa_srcs,
@@ -326,7 +344,17 @@ def _import(
                 msg.success("Module created '{}'".format(filenpa_module))
             elif user_input == "export":
                 msg.info("Export modules from '{}'".format(filenpa_workbook))
-                export(filenpa_manager, filenpa_workbook, direpa_srcs, overwrite=True)        
+                export(
+                    active_hwnd,
+                    filenpa_workbook,
+                    direpa_srcs,
+                    overwrite=True,
+                )        
     else:
         msg.warning("Not found '{}'. Creating it with export".format(direpa_srcs))
-        export(filenpa_workbook, direpa_srcs, overwrite=False)
+        export(
+            active_hwnd,
+            filenpa_workbook,
+            direpa_srcs,
+            overwrite=False,
+        )    
