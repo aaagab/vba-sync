@@ -4,7 +4,6 @@
         "Gabriel Auger"
     ],
     "deps": [
-        "fe9fbe81-806f-4e85-8042-aaa33ce02d6a|etconf|2.2.5|gpm",
         "cf09346e-b436-4259-b6dd-e56516b508a5|message|8.1.1|gpm",
         "ca72f0a9-8a9b-4ff6-a013-e5d0974cb1e5|options|8.8.0|gpm",
         "b1a980c3-6e1c-4072-a16c-81df61f2f898|prompt|3.2.0|gpm"
@@ -16,7 +15,7 @@
         "MIT"
     ],
     "name": "vba-sync",
-    "timestamp": 1629818350.8131654,
+    "timestamp": 1629818966.1087441,
     "uuid4": "ec2779f4-947e-44cf-9eb6-ef68f75efbf5",
-    "version": "1.0.0"
+    "version": "1.1.0"
 }
