@@ -95,6 +95,7 @@ def macro(
     if wb is None:
         wb = xl.Workbooks.Open(filenpa_workbook)
 
+    wb.EnableAutoRecover=False
     dy_options=dict(
         immediate=immediate,
         search=True,
@@ -177,7 +178,6 @@ def export(
 
     if wb is None:
         wb = xl.Workbooks.Open(filenpa_workbook, 0, True)
-
     has_error=False
 
     if wb.VBProject.Protection == 1:
