@@ -51,7 +51,9 @@ def focus_workbook(dy_options):
                     found=True
                     if dy_options["immediate"] is True:
                         shell = win32com.client.Dispatch("WScript.Shell")
+                        time.sleep(.1)
                         shell.SendKeys("%{F11}")
+                        time.sleep(.1)
                         shell.SendKeys("^g")
                     break
             if found is True:
