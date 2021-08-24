@@ -71,6 +71,8 @@ def macro(
     macro_name,
     immediate=False,
     params=None,
+    reset_macro=False,
+    reset_macro_seconds=None,
 ):
     active_hwnd=win32gui.GetForegroundWindow()
     filen_workbook=os.path.basename(filenpa_workbook)
@@ -106,8 +108,18 @@ def macro(
         immediate=immediate,
         window_title="{} - Excel".format(filen_workbook),
     )
-
     focus_workbook(dy_options)
+
+    if reset_macro is True:
+        dy_reset_options=dict(
+            active_hwnd=active_hwnd,
+            xl=xl, 
+            has_ended=False,
+            reset_macro_seconds=reset_macro_seconds,
+        )
+
+        th=threading.Thread(target=execute_reset_macro, args=(dy_reset_options,))
+        th.start()
 
     cmd=[
         macro_name,
@@ -125,9 +137,40 @@ def macro(
                 macro_name,
             ),
         )
-        
     else:
         msg.success("{} {}".format(filen_workbook, macro_name))
+    finally:
+        dy_reset_options["has_ended"]=True
+
+
+def execute_reset_macro(dy_options):
+    wait_seconds=dy_options["reset_macro_seconds"]
+    if wait_seconds is None:
+        wait_seconds=3
+    pythoncom.CoInitialize()
+    timer=TimeOut(wait_seconds).start()
+    execute_reset=False
+    while True:
+    # Application.VBE.CommandBars(1).Controls("&Run").Controls("&Reset")
+        if dy_options["has_ended"] is True:
+            break 
+        elif timer.has_ended(pause=.05):
+            execute_reset=True
+            break
+    if execute_reset is True:
+        try:
+            # dy_options["xl"].VBE.CommandBars(1).Controls("&Run").Controls("&Reset").Execute()
+            time.sleep(.1)
+            shell = win32com.client.Dispatch("WScript.Shell")
+            shell.SendKeys("{ENTER}")
+            time.sleep(.1)
+            win32com.client.GetActiveObject("Excel.Application").VBE.CommandBars(1).Controls("&Run").Controls("&Reset").Execute()
+        except com_error as e:
+            manage_error(
+                dy_options["active_hwnd"], 
+                e, 
+                "issue when resetting macro",
+            )
 
 def manage_error(
     active_hwnd,
