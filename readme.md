@@ -5,7 +5,7 @@ Developer / Code / Macro Security /
   Enable all macros
   Trust access to the VBA project object model
 
-md5 from files to edit are checked against a tmp files that is recreated on each reboot. Files are then updated only if needed.
+md5 from files to edit are checked against a cache file that is stored in srcs folder. Files are then updated only if needed.
 
 issue:
 exported file trying to run ExportModules issue: "user-defined type not defined" error message on this line: Dim VBComp As VBIDE.VBComponent
