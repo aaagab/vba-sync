@@ -67,6 +67,7 @@ if __name__ == "__main__":
         if args.macro.here:
             pkg.macro(
                 active_hwnd=active_hwnd,
+                clear=args.clear.here,
                 filenpa_workbook=filenpa_workbook,
                 macro_name=args.macro.value,
                 immediate=args.immediate.here,
