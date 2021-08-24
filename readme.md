@@ -5,6 +5,8 @@ Developer / Code / Macro Security /
   Enable all macros
   Trust access to the VBA project object model
 
+When Opening a workbook for macro the AutoRecover is set To False. It prevents being bothered by recovery functionality.
+
 md5 from files to edit are checked against a cache file that is stored in srcs folder. Files are then updated only if needed.
 
 issue:
