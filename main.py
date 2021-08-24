@@ -72,4 +72,6 @@ if __name__ == "__main__":
                 macro_name=args.macro.value,
                 immediate=args.immediate.here,
                 params=args.params.values,
+                reset_macro=args.reset_macro.here,
+                reset_macro_seconds=args.reset_macro.value,
             )

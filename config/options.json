@@ -22,7 +22,7 @@
         "nested": true
     },
     "macro": {
-        "args": "immediate,params,workbook",
+        "args": "immediate,params,reset_macro,workbook",
         "info": "execute a macro from a particular workbook",
         "nvalues": 1,
         "values": "NAME"
@@ -38,6 +38,13 @@
     },
     "pkill": {
         "info": "kill any active excel process"
+    },
+    "reset_macro": {
+        "info": "when running macro, if macro get stuck because of debug, the macro can be stopped programmatically and reset. default wait time is 3 seconds",
+        "nested": true,
+        "type": "float",
+        "nvalues": "?",
+        "value": "WAIT_SECONDS"
     },
     "reset_cache": {
         "info": "for import, delete cache file and recreate content",
