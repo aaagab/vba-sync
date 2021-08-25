@@ -158,7 +158,10 @@ def execute_reset_macro(dy_options):
         else:
             if timer is None:
                 active_window_title=win32gui.GetWindowText(win32gui.GetForegroundWindow())
-                if active_window_title == "Microsoft Visual Basic for Applications":
+                if active_window_title in [
+                    "Microsoft Visual Basic for Applications",
+                    "Microsoft Visual Basic",
+                ]:
                     timer=TimeOut(wait_seconds).start()
                 else:
                     time.sleep(.5)
