@@ -33,3 +33,9 @@ Solution:
 Go in File/Options/Save: find the path and delete everything in that folder. Close excel/word and open again. Check if you get autorecovery files again or not.
 
 Sheets vba can be exported easily but not imported. If imported they are not imported as sheets but as class modules. So any code that is global regarding to a sheet should be implemented in a vba module if possible. That is why sheets are not imported.
+
+To Diable Annoying beep on compile errors MsgBox do:
+Win+R
+mmsys.cpl
+go to Sounds tab
+in scrolling list select Exclamation and sounds and select None
