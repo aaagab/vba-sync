@@ -40,7 +40,7 @@
         "info": "kill any active excel process"
     },
     "reset_macro": {
-        "info": "when running macro, if macro get stuck because of debug, the macro can be stopped programmatically and reset. default wait time is 3 seconds",
+        "info": "when running macro, if macro get stuck because of compile error, the macro can be stopped programmatically and reset. default wait time is 3 seconds. To trigger the reset macro a prompt box must poppedup and its title must be \"Microsoft Visual Basic for Applications\".",
         "nested": true,
         "type": "float",
         "nvalues": "?",
