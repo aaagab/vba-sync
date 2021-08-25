@@ -110,6 +110,12 @@ def macro(
     )
     focus_workbook(dy_options)
 
+    cmd=[
+        macro_name,
+        *params
+    ]
+
+    dy_reset_options=dict()
     if reset_macro is True:
         dy_reset_options=dict(
             active_hwnd=active_hwnd,
@@ -121,14 +127,11 @@ def macro(
         th=threading.Thread(target=execute_reset_macro, args=(dy_reset_options,))
         th.start()
 
-    cmd=[
-        macro_name,
-        *params
-    ]
-
     try:
         xl.Run(*cmd)
     except com_error as e:
+        if reset_macro is True:
+            dy_reset_options["has_ended"]=True
         manage_error(
             active_hwnd, 
             e, 
@@ -143,35 +146,37 @@ def macro(
         if reset_macro is True:
             dy_reset_options["has_ended"]=True
 
-
 def execute_reset_macro(dy_options):
     wait_seconds=dy_options["reset_macro_seconds"]
     if wait_seconds is None:
         wait_seconds=3
     pythoncom.CoInitialize()
-    timer=TimeOut(wait_seconds).start()
-    execute_reset=False
+    timer=None
     while True:
-    # Application.VBE.CommandBars(1).Controls("&Run").Controls("&Reset")
         if dy_options["has_ended"] is True:
             break 
-        elif timer.has_ended(pause=.05):
-            execute_reset=True
-            break
-    if execute_reset is True:
-        try:
-            # dy_options["xl"].VBE.CommandBars(1).Controls("&Run").Controls("&Reset").Execute()
-            time.sleep(.1)
-            shell = win32com.client.Dispatch("WScript.Shell")
-            shell.SendKeys("{ENTER}")
-            time.sleep(.1)
-            win32com.client.GetActiveObject("Excel.Application").VBE.CommandBars(1).Controls("&Run").Controls("&Reset").Execute()
-        except com_error as e:
-            manage_error(
-                dy_options["active_hwnd"], 
-                e, 
-                "issue when resetting macro",
-            )
+        else:
+            if timer is None:
+                active_window_title=win32gui.GetWindowText(win32gui.GetForegroundWindow())
+                if active_window_title == "Microsoft Visual Basic for Applications":
+                    timer=TimeOut(wait_seconds).start()
+                else:
+                    time.sleep(.5)
+            else:
+                if timer.has_ended(pause=1):
+                    try:
+                        time.sleep(.1)
+                        shell = win32com.client.Dispatch("WScript.Shell")
+                        shell.SendKeys("{ENTER}")
+                        time.sleep(.1)
+                        win32com.client.GetActiveObject("Excel.Application").VBE.CommandBars(1).Controls("&Run").Controls("&Reset").Execute()
+                    except com_error as e:
+                        manage_error(
+                            dy_options["active_hwnd"], 
+                            e, 
+                            "issue when resetting macro",
+                        )
+                    break
 
 def manage_error(
     active_hwnd,
