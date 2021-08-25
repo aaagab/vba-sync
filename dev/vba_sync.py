@@ -140,7 +140,8 @@ def macro(
     else:
         msg.success("{} {}".format(filen_workbook, macro_name))
     finally:
-        dy_reset_options["has_ended"]=True
+        if reset_macro is True:
+            dy_reset_options["has_ended"]=True
 
 
 def execute_reset_macro(dy_options):
