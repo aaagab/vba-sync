@@ -190,15 +190,17 @@ def manage_error(
                 e_msg=win32api.FormatMessage(elem).rstrip()
             except pywintypes.error as e:
                 print(e)
-                msg.error("error code '{}' not found with win32api.FormatMessage. Trying to extract error message anyway.".format(error_code))
+                msg.error("error code '{}' not found with win32api.FormatMessage.".format(error_code))
         else:
             if isinstance(elem, str):
                 if e_msg is None:
                     e_msg=elem
                 else:
                     e_msg+=", {}".format(elem)
-    
-    msg.error("{} error '{}'".format(custom_msg, e_msg))
+
+    if e_msg is None:
+        e_msg="Unknown"
+    msg.error("{} error '{}'.".format(custom_msg, e_msg))
     sys.exit(1)
 
 def export(
