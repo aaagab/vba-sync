@@ -308,16 +308,25 @@ def _import(
             dy_vbcomponents=get_dy_enum("VBComponents")
             allowed_extensions=list(set([dy_vbcomponents[code]["extension"] for code in dy_vbcomponents if dy_vbcomponents[code]["allowed"] is True]))
 
+            xl = Dispatch("Excel.Application")
+            xl.Visible = True
+            wb = xl.Workbooks.Open(filenpa_workbook)
+            vbProj=wb.VBProject
+            componentsNames=[component.Name for component in vbProj.VBComponents]
+
             for elem in sorted(os.listdir(direpa_srcs)):
                 update_file=False
                 path_elem=os.path.join(direpa_srcs, elem)
                 if os.path.isfile(path_elem):
-                    filer, ext=os.path.splitext(elem)
+                    module_name, ext=os.path.splitext(elem)
                     if ext in allowed_extensions:
                         all_filens.append(elem)
                         md5=hashlib.md5(open(path_elem,'rb').read()).hexdigest()
-                        if elem in dy_cache[filen_workbook]:
-                            if md5 != dy_cache[filen_workbook][elem]:
+                        if module_name in componentsNames:
+                            if elem in dy_cache[filen_workbook]:
+                                if md5 != dy_cache[filen_workbook][elem]:
+                                    update_file=True
+                            else:
                                 update_file=True
                         else:
                             update_file=True
@@ -332,13 +341,7 @@ def _import(
                     save_cache=True
                     del dy_cache[filen_workbook][filen]
 
-
             if len(filens_update) > 0:
-                xl = Dispatch("Excel.Application")
-                xl.Visible = True
-                wb = xl.Workbooks.Open(filenpa_workbook)
-
-                vbProj=wb.VBProject
                 for component in vbProj.VBComponents:
                     if component.Type in dy_vbcomponents:
                         if dy_vbcomponents[component.Type]["allowed"]:
