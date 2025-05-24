@@ -2,8 +2,8 @@
 # authors: Gabriel Auger
 # name: vba-sync
 # licenses: MIT 
-__version__= "1.7.2"
+__version__= "1.8.0"
 
 from .dev.vba_sync import export, _import, macro
 from .gpkgs import message as msg
-from .gpkgs.options import Options
+from .gpkgs.nargs import Nargs
