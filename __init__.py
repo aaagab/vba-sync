@@ -6,4 +6,4 @@ __version__= "1.7.2"
 
 from .dev.vba_sync import export, _import, macro
 from .gpkgs import message as msg
-from .gpkgs.options import Options
+from .gpkgs.nargs import Nargs

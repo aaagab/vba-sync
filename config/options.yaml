@@ -1,0 +1,59 @@
+args:
+  _examples: |
+    main.py --workbook ..\xls\generate-interactions-report.xlsm --export --srcs ..\test
+    main.py --workbook "..\xls\generate-interactions-report.xlsm" --import --srcs ..\test --overwrite
+    main.py --workbook "..\xls\generate-interactions-report.xlsm" --import --overwrite --reset-cache
+    main.py --workbook "..\xls\generate-interactions-report.xlsm" --macro RefreshFiles
+    main.py --workbook "..\xls\generate-interactions-report.xlsm" --import --macro RefreshFiles --params myparam --overwrite
+    main.py --workbook "..\xls\generate-interactions-report.xlsm" --macro RefreshFiles --params myparam --import --overwrite --immediate
+
+  import:
+    _info: Import vba modules from direpa srcs to workbook.
+    overwrite:
+      _info: It allows to disable prompt when an existing module needs to be overwritten in workook or in srcs directory
+    reset_cache:
+      _info: for import, delete cache file and recreate content
+    srcs:
+      _info: directory where to store and retrieve .bas, .cls, and .frm files.
+      _type: dir
+      _values: "?"
+      _label: DIRECTORY
+
+  export:
+    _info: Save vba modules for editing from workbook to srcs directory.
+    overwrite:
+      _info: It allows to disable prompt when an existing module needs to be overwritten in workook or in srcs directory
+    srcs:
+      _info: directory where to store and retrieve .bas, .cls, and .frm files.
+      _type: dir
+      _values: "?"
+      _label: DIRECTORY
+
+  macro:
+    _info: execute a macro from a particular workbook
+    _values: 1
+    _label: NAME
+    immediate:
+      _info: open the immediate window that is useful to debug in vba with Debug.Print
+      clear:
+        _info: clear immediate window
+    params:
+      _info: list of macro parameters
+      _values: +
+      _label: STRING
+    reset_macro:
+      _info: when running macro, if macro get stuck because of compile error, the macro can be stopped programmatically and reset. default wait time is 3 seconds. To trigger the reset macro a prompt box must poppedup and its title must be "Microsoft Visual Basic for Applications".
+      _type: float
+      _values: "?"
+      _label: WAIT_SECONDS
+
+  no_recovery:
+    _info: delete files recovery
+
+  pkill:
+    _info: kill any active excel process
+
+  workbook:
+    _values: 1
+    _type: file
+    _label: FILEPATH
